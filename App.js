@@ -14,6 +14,16 @@ const styles = StyleSheet.create({
 });
 
 export default class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      location: {
+        latitude: -19.9245,
+        longitude: -43.9352,
+      },
+    };
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -23,14 +33,11 @@ export default class App extends Component {
             latitude: -19.9245,
             longitude: -43.9352,
             latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421, 
+            longitudeDelta: 0.0421,
           }}
         >
           <Marker
-            coordinate={{
-              latitude: -19.9245,
-              longitude: -43.9352,
-            }}
+            coordinate={this.state.location}
           />
         </MapView>
         <GooglePlacesAutocomplete
@@ -52,11 +59,21 @@ export default class App extends Component {
           }
           query={
             {
-              key: process.env['API_KEY'],
+              key: process.env.API_KEY,
               language: 'pt-BR',
               location: '-19.9245, -43.9352',
               radius: '30000',
               strictbounds: 'true',
+            }
+          }
+          onPress={
+            (data, details) => {
+              this.setState(state => ({
+                location: {
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                },
+              }));
             }
           }
         />
