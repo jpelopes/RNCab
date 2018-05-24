@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import MapView, { Marker } from 'react-native-maps';
+import Geocoder from 'react-native-geocoder';
 
 import LocationSearch from './src/components/LocationSearch';
 
@@ -34,6 +35,29 @@ export default class App extends Component {
     };
   }
 
+  onMarkerDrag = (identifier, coordinates) => {
+    Geocoder.geocodePosition({
+      lat: coordinates.latitude,
+      lng: coordinates.longitude,
+    }).then((response) => {
+      this[`${identifier}LocationSearchRef`]
+        .googlePlacesAutocompleteRef
+        .setAddressText(`${response[0].streetName}, ${response[0].streetNumber}`);
+
+      this.setState(state => ({
+        locations: {
+          ...state.locations,
+          [identifier]: {
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude,
+          },
+        },
+      }));
+    }).catch((error) => {
+      alert(error);
+    });
+  }
+
   setLocation = identifier => (data, details) => {
     this.setState(state => ({
       locations: {
@@ -54,6 +78,9 @@ export default class App extends Component {
         <Marker
           coordinate={this.state.locations[identifier]}
           key={`marker_${identifier}`}
+          pinColor={identifier === 'origin' ? 'red' : 'blue'}
+          draggable
+          onDragEnd={e => this.onMarkerDrag(identifier, e.nativeEvent.coordinate)}
         />
       );
     }
@@ -84,6 +111,9 @@ export default class App extends Component {
                 identifier={identifier}
                 onPress={this.setLocation(identifier)}
                 key={`search_${identifier}`}
+                ref={(ref) => {
+                  this[`${identifier}LocationSearchRef`] = ref;
+                }}
               />))
           }
         </View>
