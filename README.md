@@ -1,8 +1,7 @@
 # RNCab
 
 Android ride sharing app demonstration made with React Native.
-This project is meant to be used along with the React Native and Redux tutorial written by me (check Wiki).
-Each branch corresponds to a section of the tutorial.
+This is part of a tutorial.
 
 ## Getting Started
 
